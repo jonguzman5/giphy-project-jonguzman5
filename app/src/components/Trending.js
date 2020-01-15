@@ -1,48 +1,44 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import Trend from './Trend';
 
 class Trending extends Component {
   constructor(props){
     super(props)
     this.state = {
-      search: ''
+      query: []
     }
   }
 
-  myChangeHandler = (e) => {
-    this.setState({search: e.target.value});
-  }
-
-  mySubmitHandler = (e) => {
-    e.preventDefault();
+  componentDidMount(){
     const input = this.state.search;
     const KEY = 'JjIwbA5iRRKn02sRLnakMOfgYXxPFVLC'
     axios.get(`http://api.giphy.com/v1/gifs/trending?api_key=${KEY}`)
       .then(res => {
-        const data = res.data;
-        console.log(data);
-        //this.setState({search: data.data[0].url})
+        const data = res.data.data;
+        //console.log(data);
+        let arr = [];
+        data.forEach(r => {
+          arr.push(r.images.original.url);
+        })
+        this.setState({query: arr})
     })
   }
 
-
   render(){
     return (
-      <form onSubmit={this.mySubmitHandler}>
+      <div>
         <h1>TRENDING!</h1>
-        <input type='text' onChange={this.myChangeHandler}/>
-        <input type='submit' />
-{/*        <ul>
-          {Object.keys(this.state.zips).map(key => (
-            <Zip
+        <ul>
+          {Object.keys(this.state.query).map(key => (
+            <Trend
               key={key}
               index={key}//to access key
-              //details={this.state.zips[key]}
-              code={this.state.zips[key]}
+              images={this.state.query[key]}
             />
           ))}
-        </ul>*/}
-      </form>
+        </ul>
+      </div>
     )
   }
 }
